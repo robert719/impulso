@@ -1,0 +1,48 @@
+<div fxLayout="row" class="ma-1" fxLayoutAlign="center center" *ngIf="!consultantLoaded">
+    <md-progress-bar mode="indeterminate" color="primary" class="mb-1"></md-progress-bar>
+</div>
+
+<div *ngIf="consultantLoaded">
+    <form [formGroup]="consultantsForm" (submit)="addEdit(consultantsForm?.value)" enctype="multipart/form-data">
+
+        <md-card-title *ngIf="addingConsultant">Agregar asesor</md-card-title>
+        <md-card-title *ngIf="editingConsultant">Editar asesor</md-card-title>
+
+        <md-dialog-content>
+
+            <input type="hidden" formControlName="id" [ngModel]="consultantSelected?.id">
+
+            <div style="float:left; width: 100%;">
+                <md-input-container style="width: 100%;">
+                    <input required mdInput placeholder="Nombre:" formControlName="name" type="text" [ngModel]="consultantSelected?.name">
+                </md-input-container>
+                <small *ngIf="consultantsForm.controls['name'].hasError('required') && consultantsForm.controls['name'].touched"
+                       class="mat-text-warn">Campo requerido.
+                </small>
+            </div>
+
+            <div style="float: right; width: 100%;">
+                <md-input-container style="width: 100%;">
+                    <input mdInput placeholder="Teléfono:" formControlName="phone" [ngModel]="consultantSelected?.phone">
+                </md-input-container>
+            </div>
+
+            <div style="float: right; width: 100%;">
+                <md-input-container style="width: 100%;">
+                    <input mdInput placeholder="Email:" formControlName="email" [ngModel]="consultantSelected?.email">
+                    <small *ngIf="consultantsForm.controls['email'].errors?.email && consultantsForm.controls['email'].touched" class="mat-text-warn">Debes ingresar un email válido.</small>
+                </md-input-container>
+            </div>
+
+        </md-dialog-content>
+
+        <md-dialog-actions>
+
+            <button md-raised-button color="accent"  type="submit" class="mr-1">Guardar</button>
+            <button md-button type="button" (click)="dialogRef.close()">Cancelar</button>
+
+
+        </md-dialog-actions>
+    </form>
+
+</div>

@@ -1,0 +1,92 @@
+<div fxLayout="row" class="ma-1" fxLayoutAlign="center center" *ngIf="!ownersLoaded">
+    <md-progress-bar mode="indeterminate" color="primary" class="mb-1"></md-progress-bar>
+</div>
+
+<md-sidenav-container class="background-none shadow-none" style="position: relative" *ngIf="ownersLoaded">
+    <md-sidenav #ownersnav [mode]="isOver() ? 'over' : 'side'" [opened]="!isOver()" class="pa-1 ma-0">
+        <form [formGroup]="ownersFilter">
+            <button class="mb-1" color="primary" md-raised-button *ngIf="ownersFilterActive()" (click)="cleanOwnersFilter()">
+                <md-icon mdSuffix>close</md-icon>
+                Limpiar
+            </button>
+            <!--<p class="mt-0"><b>Filtros:</b></p>-->
+            <md-input-container>
+                <input mdInput placeholder="Nombre:" formControlName="name">
+            </md-input-container>
+            <md-input-container>
+                <input mdInput placeholder="Email:" formControlName="email">
+            </md-input-container>
+            <md-input-container>
+                <input mdInput placeholder="Documento:" formControlName="document">
+            </md-input-container>
+            <md-input-container>
+                <input mdInput placeholder="Teléfono:" formControlName="phone">
+            </md-input-container>
+        </form>
+
+    </md-sidenav>
+    <md-toolbar color="primary" fxHide="false" fxHide.gt-sm>
+        <button (click)="ownersnav.toggle()" md-icon-button>
+            <md-icon>short_text</md-icon>
+        </button>
+        <span class="mr-1 ml-1">Filtros</span>
+    </md-toolbar>
+
+    <div fxLayout="row" class="ma-1" fxLayoutAlign="center top" *ngIf="ownersLoading" style="min-height: 1000px;">
+        <md-progress-bar mode="indeterminate" color="primary" class="mb-1"></md-progress-bar>
+    </div>
+
+    <div style="min-height: 1000px;">
+    <div fxLayout="row" fxLayoutWrap="wrap" *ngIf="!ownersLoading">
+        <div fxFlex.gt-md="33.33%" fxFlex.gt-sm="50" fxFlex.gt-xs="50" fxFlex="100" *ngFor="let item of owner_list">
+            <md-card>
+                <div fxLayout="row">
+                    <div class="pa-1" fxFlex>
+                        <div fxLayout="column">
+                            <div>
+                                <p class="ma-0">{{ item.name }}</p>
+                                <p class="ma-0 pa-0 text-md">{{ item.email }}</p>
+                            </div>
+
+                            <div class="mat-text-primary text-xl">
+                                <span class="mat-text-muted text-sm">{{item.document}}</span><br>
+                                <span> {{ item.phone1 }} {{item.phone2 ? '/ '+item.phone2 : ''}}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <md-card-actions>
+
+                    <button md-button (click)="onSelect(item)">
+                        <md-icon color="primary">mode_edit</md-icon>
+                        Editar
+                    </button>
+
+                    <button md-button (click)="onDelete(item)">
+                        <md-icon color="warn">delete_forever</md-icon>
+                        Borrar
+                    </button>
+
+                </md-card-actions>
+            </md-card>
+        </div>
+    </div>
+
+        <div fxLayout="row" class="ma-1" fxLayoutAlign="center center" *ngIf="!ownersLoading && loadMore && !loadingMore">
+            <button md-button md-raised-button color="primary" (click)="loadOwners()">Cargar más</button>
+        </div>
+
+        <div fxLayout="row" class="ma-1" fxLayoutAlign="center center" *ngIf="loadingMore">
+            <md-progress-bar mode="indeterminate" color="primary" class="mb-1"></md-progress-bar>
+        </div>
+
+
+        <div fxLayout="row" class="ma-1" *ngIf="!ownersLoading && owner_list.length === 0" style="min-height: 1000px;">
+            <span style="color: dimgray;">No se encontraron resultados.</span>
+        </div>
+
+    </div>
+
+    <div style="width: 100%; height: 100px;"></div>
+
+</md-sidenav-container>

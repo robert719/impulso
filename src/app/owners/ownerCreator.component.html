@@ -1,0 +1,61 @@
+<div fxLayout="row" class="ma-1" fxLayoutAlign="center center" *ngIf="!ownerLoaded">
+    <md-progress-bar mode="indeterminate" color="primary" class="mb-1"></md-progress-bar>
+</div>
+
+<div *ngIf="ownerLoaded">
+    <form [formGroup]="ownersForm" (submit)="addEdit(ownersForm?.value)" enctype="multipart/form-data">
+
+        <md-card-title *ngIf="addingOwner">Agregar propietario</md-card-title>
+        <md-card-title *ngIf="editingOwner">Editar propietario</md-card-title>
+
+        <md-dialog-content>
+
+            <input type="hidden" formControlName="id" [ngModel]="ownerSelected?.id">
+            <input type="hidden" value="null" formControlName="date" [ngModel]="ownerSelected?.date">
+
+            <div style="float:left; width: 100%;">
+                <md-input-container style="width: 100%;">
+                    <input required mdInput placeholder="Nombre:" formControlName="name" type="text" [ngModel]="ownerSelected?.name">
+                </md-input-container>
+                <small *ngIf="ownersForm.controls['name'].hasError('required') && ownersForm.controls['name'].touched"
+                       class="mat-text-warn">Campo requerido.
+                </small>
+            </div>
+
+            <div style="float: right; width: 100%;">
+                <md-input-container style="width: 100%;">
+                    <input mdInput placeholder="Email:" formControlName="email" [ngModel]="ownerSelected?.email">
+                    <small *ngIf="ownersForm.controls['email'].errors?.email && ownersForm.controls['email'].touched" class="mat-text-warn">Debes ingresar un email válido.</small>
+                </md-input-container>
+            </div>
+
+            <div style="float: right; width: 100%;">
+                <md-input-container style="width: 100%;">
+                    <input mdInput placeholder="Documento:" formControlName="document" [ngModel]="ownerSelected?.document">
+                </md-input-container>
+            </div>
+
+            <div style="float: right; width: 100%;">
+                <md-input-container style="width: 100%;">
+                    <input mdInput placeholder="Teléfono 1:" formControlName="phone1" [ngModel]="ownerSelected?.phone1">
+                </md-input-container>
+            </div>
+
+            <div style="float: right; width: 100%;">
+                <md-input-container style="width: 100%;">
+                    <input mdInput placeholder="Teléfono 2:" formControlName="phone2" [ngModel]="ownerSelected?.phone2">
+                </md-input-container>
+            </div>
+
+        </md-dialog-content>
+
+        <md-dialog-actions>
+
+            <button md-raised-button color="accent"  type="submit" class="mr-1">Guardar</button>
+            <button md-button type="button" (click)="dialogRef.close()">Cancelar</button>
+
+
+        </md-dialog-actions>
+    </form>
+
+</div>

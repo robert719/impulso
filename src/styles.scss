@@ -1,0 +1,8 @@
+@import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css');
+@import '~ngx-sharebuttons/styles/share-buttons.css';
+@import '~ngx-sharebuttons/styles/themes/default/default-theme.css';
+/** Import core style */
+@import "~ngx-sharebuttons/styles/share-buttons";
+ 
+/** Import a theme */
+@import "~ngx-sharebuttons/styles/themes/circles/circles-theme";

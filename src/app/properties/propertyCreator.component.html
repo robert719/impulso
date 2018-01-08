@@ -1,0 +1,488 @@
+<div fxLayout="row" class="ma-1" fxLayoutAlign="center center" *ngIf="!propertyLoaded">
+    <md-progress-bar mode="indeterminate" color="primary" class="mb-1"></md-progress-bar>
+</div>
+
+<div *ngIf="propertyLoaded">
+    <form [formGroup]="propertiesForm" enctype="multipart/form-data" (submit)="addEdit(propertiesForm?.value)" (keydown.enter)="$event.preventDefault()">
+
+        <md-card-title *ngIf="addingProperty">Agregar propiedad</md-card-title>
+        <md-card-title *ngIf="editingProperty">Editar propiedad</md-card-title>
+        <md-card-subtitle *ngIf="showErrors">
+            <div *ngIf="propertiesForm.invalid && !propertiesForm.untouched">
+                Completa todos los campos.
+            </div>
+            <div *ngIf="propertiesForm.untouched">
+                No has realizado ningún cambio.
+            </div>
+        </md-card-subtitle>
+        <md-dialog-content>
+
+            <md-tab-group md-stretch-tabs>
+                <md-tab>
+                    <ng-template md-tab-label color="warn">
+                        <md-icon>arrow_forward</md-icon>
+                        <span class="stepsTitles">Imágenes</span>
+                    </ng-template>
+                    <md-card-content>
+
+                        <div style="width: 100%;" class="mt-2 mb-2">
+
+                            <div>
+                                <div *ngIf="previewImages.length > 0" id="divImageHolder">
+                                    <label style='height: 30px; width: 100%; display: block; text-align: center; color: darkgray;'
+                                           *ngIf="previewImages.length > 0">Imágen principal:</label>
+                                    <img src='{{principalImagePreview.img}}'
+                                         style='max-height:160px; max-width:100%; display: block; margin-left: auto; margin-right: auto;'>
+                                    <br>
+                                    <br>
+                                </div>
+                                <span *ngIf="previewImages.length > 1" style="font-size: 14px; color: darkgray;">Haz click en una imágen para convertirla en la principal.</span>
+
+                                <div *ngIf="previewImages.length > 0" id="divImageHolder"
+                                     class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label"
+                                     style="margin-bottom: -15px; margin-right: -10px;">
+                                    <div *ngFor="let item of previewImages; let i = index"
+                                         style="margin-right: 8px; margin-bottom: 10px; float:left; position:relative; border:1px solid lightgray;">
+
+                                        <img (click)="changePrincipalImage(i)" src='{{previewImages[i]?.dataUrlImage}}'
+                                             style='height:60px; max-width:100px; display: block; border:1px solid lightgray; cursor: pointer;'>
+                                        <div style='width:100%; text-align:center; background-color: lightgray; cursor: pointer;'
+                                             (click)="deleteImagePreview(i)">
+                                            <button md-icon-button style="position:relative; bottom:1px;">
+                                                <md-icon>close</md-icon>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!--<input class="mdl-textfield__input" type="file" (change)="onSelectImage($event)" name="imageInput[]" id="imageInput" #imageInput multiple="multiple" />-->
+
+                            </div>
+                            <span style="font-size: 12px;" *ngIf="previewImages.length >= 20">(Máximo 20 imágenes por propiedad)</span>
+                            <span style="color:red; font-size: 12px;" *ngIf="fileNotImage">Solo se pueden seleccionar imágenes.</span>
+                            <!--<input class="mdl-textfield__input" type="hidden" formControlName="imageValue" name="imageValue" id="imageValue">-->
+
+                            <md-input-container *ngIf="previewImages.length < 20" style="width: 100%;">
+
+                                <label for="images">
+                                    <div style="width: 100%; position: absolute;">
+                                        Agregar Imágenes...
+                                    </div>
+                                </label>
+                                <input mdInput
+                                       style="width:0; height: 0;"
+                                       type="File"
+                                       name="images[]"
+                                       id="images"
+                                       #images
+                                       multiple="multiple"
+                                       (change)="onSelectImage($event)">
+
+                                <md-icon mdSuffix>add</md-icon>
+                                <md-hint align="start">Máximo 20 fotos por propiedad</md-hint>
+                                <md-hint align="end">{{previewImages.length}} / 20</md-hint>
+                            </md-input-container>
+
+                        </div>
+
+                    </md-card-content>
+                </md-tab>
+                <md-tab>
+                    <ng-template md-tab-label>
+                        <md-icon>arrow_forward</md-icon>
+                        <span class="stepsTitles">Descripción</span>
+                    </ng-template>
+                    <md-card-content>
+
+                        <div fxLayout="row" fxLayoutWrap="wrap">
+
+                            <div fxFlex.gt-md="100" fxFlex.gt-sm="100" fxFlex.gt-xs="100" fxFlex="100" class="mt-1">
+
+                                <input type="hidden" [ngModel]="this.property?.id" formControlName="id">
+                                <input type="hidden" [ngModel]="this.property?.id_property_appropiate" formControlName="id_property_appropiate">
+
+                                <div style="float:left; width: 48%;">
+                                    <md-input-container style="width: 100%;">
+                                        <input required mdInput placeholder="Estado:" [mdAutocomplete]="reactiveStatus"
+                                               formControlName="status">
+                                    </md-input-container>
+                                    <md-autocomplete #reactiveStatus="mdAutocomplete" [displayWith]="displayFn">
+                                        <md-option *ngFor="let item of reactiveStatuses | async" [value]="item">
+                                            <span>{{ item.name }}</span>
+                                        </md-option>
+                                    </md-autocomplete>
+                                    <small *ngIf="propertiesForm.controls['status'].hasError('required') && propertiesForm.controls['status'].touched"
+                                           class="mat-text-warn">Campo requerido.
+                                    </small>
+                                </div>
+
+                                <div style="float:right; width: 48%;">
+                                    <md-input-container style="width: 100%;">
+                                        <input required mdInput placeholder="Tipo de propiedad:"
+                                               [mdAutocomplete]="reactiveType" formControlName="type">
+                                    </md-input-container>
+                                    <md-autocomplete #reactiveType="mdAutocomplete" [displayWith]="displayFn">
+                                        <md-option *ngFor="let item of reactiveTypes | async" [value]="item">
+                                            <span>{{ item.name }}</span>
+                                        </md-option>
+                                    </md-autocomplete>
+                                    <small *ngIf="propertiesForm.controls['type'].hasError('required') && propertiesForm.controls['type'].touched"
+                                           class="mat-text-warn">Campo requerido.
+                                    </small>
+                                </div>
+
+                                <div style="clear: both"></div>
+
+                                <div style="float: left; width: 48%;">
+                                    <md-input-container style="width: 100%;">
+                                        <input required mdInput placeholder="Negocio:"
+                                               [mdAutocomplete]="reactivePropertyOn"
+                                               formControlName="property_on">
+                                    </md-input-container>
+                                    <md-autocomplete #reactivePropertyOn="mdAutocomplete" [displayWith]="displayFn">
+                                        <md-option *ngFor="let item of reactivePropertiesOn | async" [value]="item">
+                                            <span>{{ item.name }}</span>
+                                        </md-option>
+                                    </md-autocomplete>
+                                    <small style="width: 100%;"
+                                           *ngIf="propertiesForm.controls['property_on'].hasError('required') && propertiesForm.controls['property_on'].touched"
+                                           class="mat-text-warn">Campo requerido.
+                                    </small>
+                                </div>
+
+                                <div style="float: right; width: 48%;">
+                                    <md-input-container style="width: 100%;">
+                                        <input required mdInput placeholder="Ubicación:"
+                                               [mdAutocomplete]="reactiveLocation" formControlName="location">
+                                    </md-input-container>
+                                    <md-autocomplete #reactiveLocation="mdAutocomplete" [displayWith]="displayFn">
+                                        <md-option *ngFor="let item of reactiveLocations | async" [value]="item">
+                                            <span>{{ item.name }}</span>
+                                        </md-option>
+                                    </md-autocomplete>
+                                    <small *ngIf="propertiesForm.controls['location'].hasError('required') && propertiesForm.controls['location'].touched"
+                                           class="mat-text-warn">Campo requerido.
+                                    </small>
+                                </div>
+
+                                <div style="clear: both"></div>
+
+                                <div style="float: left; width: 100%;">
+                                    <md-input-container style="width: 100%;">
+                                        <input required mdInput placeholder="Sector:"
+                                               [mdAutocomplete]="reactiveSector" formControlName="sector">
+                                        <md-hint *ngIf="!propertiesForm.controls['location'].value">Selecciona primero
+                                            una ubicación.
+                                        </md-hint>
+                                    </md-input-container>
+                                    <md-autocomplete #reactiveSector="mdAutocomplete" [displayWith]="displaySector">
+                                        <md-option *ngFor="let item of reactiveSectors | async" [value]="item">
+                                            <span>{{ item.sector }}</span>
+                                        </md-option>
+                                    </md-autocomplete>
+                                    <small *ngIf="propertiesForm.controls['sector'].hasError('required') && propertiesForm.controls['sector'].touched"
+                                           class="mat-text-warn">Campo requerido.
+                                    </small>
+                                    <div *ngIf="addSector && !addingSector" class="mt-0 mb-1 pa-1" style="border: 1px solid lightgray">
+                                            <span class="text-lg">
+                                                ¿Quieres agregar el sector {{propertiesForm.controls['sector'].value}} a
+                                            {{propertiesForm.controls['location'].value.name}}?
+                                            </span> &nbsp;
+                                            <button md-button-sm md-button md-raised-button color="primary" (click)="addNewSector(propertiesForm.controls['location'].value.id,propertiesForm.controls['sector'].value)">Agregar</button>
+                                    </div>
+                                    <md-progress-bar mode="indeterminate" color="primary" class="mb-1" *ngIf="addingSector"></md-progress-bar>
+                                </div>
+
+                                <div style="clear: both"></div>
+
+                                <div style="float: left; width: 48%;">
+                                    <md-input-container style="width: 100%;">
+                                        <input type="number" required mdInput [ngModel]="this.property?.area"
+                                               placeholder="Área:"
+                                               formControlName="area">
+                                    </md-input-container>
+                                    <small *ngIf="propertiesForm.controls['area'].hasError('required') && propertiesForm.controls['area'].touched"
+                                           class="mat-text-warn">Campo requerido.
+                                    </small>
+                                </div>
+
+                                <div style="float: right; width: 48%;">
+                                    <md-input-container style="width: 100%;">
+                                        <input required mdInput placeholder="Unidad:" [mdAutocomplete]="reactiveUnit"
+                                               formControlName="unit">
+                                    </md-input-container>
+                                    <md-autocomplete #reactiveUnit="mdAutocomplete" [displayWith]="displayFn">
+                                        <md-option *ngFor="let item of reactiveUnits | async" [value]="item">
+                                            <span>{{ item.name }}</span>
+                                        </md-option>
+                                    </md-autocomplete>
+                                    <small style="width: 100%;"
+                                           *ngIf="propertiesForm.controls['unit'].hasError('required') && propertiesForm.controls['unit'].touched"
+                                           class="mat-text-warn">Campo requerido.
+                                    </small>
+                                </div>
+
+                                <div style="clear: both"></div>
+
+                                <div style="float: left; width: 48%;">
+                                    <md-input-container style="width: 100%;">
+                                        <input type="number" mdInput placeholder="Área construida (m2):"
+                                               [ngModel]="this.property?.built_area"
+                                               formControlName="built_area">
+                                    </md-input-container>
+                                    <small *ngIf="propertiesForm.controls['built_area'].errors?.number && propertiesForm.controls['built_area'].touched"
+                                           class="mat-text-warn">Solo debes ingresar números.
+                                    </small>
+                                </div>
+
+                                <div style="float: right; width: 48%;">
+                                    <md-input-container style="width: 100%;">
+                                        <input type="number" required mdInput placeholder="Precio:"
+                                               [ngModel]="this.property?.price"
+                                               formControlName="price">
+                                    </md-input-container>
+                                    <small style="width: 100%;"
+                                           *ngIf="propertiesForm.controls['price'].hasError('required') && propertiesForm.controls['price'].touched"
+                                           class="mat-text-warn">Campo requerido.
+                                    </small>
+                                </div>
+
+                                <div style="clear: both"></div>
+
+                                <div style="float: left; width: 100%;">
+                                    <md-input-container style="width: 100%;">
+                                        <textarea mdInput placeholder="Dirección:" formControlName="address"
+                                                  [ngModel]="this.property?.address"></textarea>
+                                    </md-input-container>
+                                </div>
+
+                                <div style="float: left; width: 100%;">
+                                    <md-input-container style="width: 100%;">
+                                        <textarea mdInput placeholder="Comentario web:"
+                                                  [ngModel]="this.property?.comments"
+                                                  formControlName="comments"></textarea>
+                                    </md-input-container>
+                                </div>
+
+                                <div style="float: left; width: 48%;">
+                                    <md-input-container style="width: 100%;">
+                                        <input type="number" mdInput placeholder="Valor administración:"
+                                               [ngModel]="this.property?.administration"
+                                               formControlName="administration">
+                                    </md-input-container>
+                                    <small *ngIf="propertiesForm.controls['administration'].errors?.number && propertiesForm.controls['administration'].touched"
+                                           class="mat-text-warn">Solo debes ingresar números.
+                                    </small>
+                                </div>
+
+                                <div style="float: right; width: 48%;">
+                                    <md-input-container style="width: 100%;">
+                                        <input mdInput placeholder="Estrato:" [mdAutocomplete]="reactiveStratum"
+                                               formControlName="stratum">
+                                    </md-input-container>
+                                    <md-autocomplete #reactiveStratum="mdAutocomplete" [displayWith]="displayFn">
+                                        <md-option *ngFor="let item of reactiveStratums | async" [value]="item">
+                                            <span>{{ item.name }}</span>
+                                        </md-option>
+                                    </md-autocomplete>
+                                </div>
+
+                                <div style="float: left; width: 48%;">
+                                    <md-input-container style="width: 100%;">
+                                        <input type="number" mdInput [ngModel]="this.property?.floors"
+                                               placeholder="Pisos:" formControlName="floors">
+                                    </md-input-container>
+                                </div>
+
+                                <div style="float: right; width: 48%;">
+                                    <md-input-container style="width: 100%;">
+                                        <input type="number" mdInput [ngModel]="this.property?.rooms"
+                                               placeholder="Habitaciones:"
+                                               formControlName="rooms">
+                                    </md-input-container>
+                                </div>
+
+                                <div style="clear: both"></div>
+
+                                <div style="float: left; width: 48%;">
+                                    <md-input-container style="width: 100%;">
+                                        <input type="number" mdInput [ngModel]="this.property?.baths"
+                                               placeholder="Baños:" formControlName="baths">
+                                    </md-input-container>
+                                </div>
+
+                                <div style="float: right; width: 48%;">
+                                    <md-input-container style="width: 100%;">
+                                        <input type="number" mdInput [ngModel]="this.property?.livings"
+                                               placeholder="Salas:" formControlName="livings">
+                                    </md-input-container>
+                                </div>
+
+                                <div style="clear: both"></div>
+
+                                <div style="float: left; width: 48%;">
+                                    <md-input-container style="width: 100%;">
+                                        <input type="number" mdInput [ngModel]="this.property?.parkings"
+                                               placeholder="Parqueaderos (carros):"
+                                               formControlName="parkings">
+                                    </md-input-container>
+                                </div>
+
+                                <div style="float: right; width: 48%;">
+                                    <md-input-container style="width: 100%;">
+                                        <input type="number" mdInput [ngModel]="this.property?.commission"
+                                               placeholder="Comisión (%):"
+                                               formControlName="commission">
+                                    </md-input-container>
+                                </div>
+
+                                <div style="float: left; width: 100%;">
+                                    <md-input-container style="width: 100%;">
+                                        <textarea mdInput placeholder="Comentarios de administración:"
+                                                  [ngModel]="this.property?.admon_comments"
+                                                  formControlName="admon_comments"></textarea>
+                                        <md-hint>Solo tú puedes ver esto.</md-hint>
+                                    </md-input-container>
+                                </div>
+
+                                <div style="clear: both"></div>
+
+                                <div style="width: 100%;">
+                                    <md-input-container style="width: 100%;">
+                                        <input required mdInput placeholder="Asesor:" [mdAutocomplete]="reactiveConsultant"
+                                               formControlName="consultant" [(ngModel)]="detailConsultant" (focusout)="focusOutConsultantFunction()">
+                                        <md-hint>Solo tú puedes ver esto.</md-hint>
+                                    </md-input-container>
+                                    <md-autocomplete #reactiveConsultant="mdAutocomplete" [displayWith]="displayFn">
+                                        <md-option *ngFor="let item of reactiveConsultants | async" [value]="item">
+                                            <span>{{ item.name }} {{item.phone ? '/ Tel. '+item.phone : ''}}</span>
+                                        </md-option>
+                                    </md-autocomplete>
+                                    <small *ngIf="propertiesForm.controls['consultant'].hasError('required') && propertiesForm.controls['consultant'].touched"
+                                        class="mat-text-warn">Campo requerido.
+                                     </small>
+                                    <div *ngIf="addConsult && !addingConsult" class="mt-0 mb-1 pa-1" style="border: 1px solid lightgray">
+                                        <span class="text-lg">
+                                            ¿Quieres agregar el asesor {{propertiesForm.controls['consultant'].value}}
+                                        </span> &nbsp;
+                                        <button md-button-sm md-button md-raised-button color="primary" (click)="addNewConsult(propertiesForm.controls['consultant'].value)">Agregar</button>
+                                    </div>
+                                    <md-progress-bar mode="indeterminate" color="primary" class="mb-1" *ngIf="addingConsult"></md-progress-bar>                                    
+                                </div>
+
+                                <div style="width: 100%;">
+                                    <md-input-container style="width: 100%;">
+                                        <input required mdInput placeholder="Propietario:" [mdAutocomplete]="reactiveOwner"
+                                               formControlName="owner"  [(ngModel)]="detailOwner" (focusout)="focusOutOwnerFunction()">
+                                        <md-hint>Solo tú puedes ver esto.</md-hint>
+                                    </md-input-container>
+                                    <md-autocomplete #reactiveOwner="mdAutocomplete" [displayWith]="displayFn">
+                                        <md-option *ngFor="let item of reactiveOwners | async" [value]="item">
+                                            <span>{{ item.name }} {{item.document ? '/ C.C. '+item.document : item.phone1 ? '/ Tel '+item.phone1 : item.phone2 ? '/ Tel '+item.phone2 : item.email ? '/ @ '+item.email : ''}}</span>
+                                        </md-option>
+                                    </md-autocomplete>
+                                    <div *ngIf="addOwner && !addingOwner" class="mt-0 mb-1 pa-1" style="border: 1px solid lightgray">
+                                        <span class="text-lg">
+                                            ¿Quieres agregar el propietario {{propertiesForm.controls['owner'].value}}
+                                        </span> &nbsp;
+                                        <button md-button-sm md-button md-raised-button color="primary" (click)="addNewOwner(propertiesForm.controls['owner'].value)">Agregar</button>
+                                    </div>
+                                    <md-progress-bar mode="indeterminate" color="primary" class="mb-1" *ngIf="addingOwner"></md-progress-bar>                                    
+                                </div>
+
+                                <div style="float: left; width: 100%;">
+                                    <md-input-container style="width: 100%;">
+                                        <input mdInput placeholder="Matrícula inmobiliaria:"
+                                                  [ngModel]="this.property?.property_registration"
+                                                  formControlName="property_registration">
+                                        <md-hint>Solo tú puedes ver esto.</md-hint>
+                                    </md-input-container>
+                                </div>
+
+                            </div>
+                        </div>
+
+                    </md-card-content>
+                </md-tab>
+
+                <md-tab>
+                    <ng-template md-tab-label>
+                        <md-icon>check</md-icon>
+                        <span class="stepsTitles">Detalles</span>
+                    </ng-template>
+                    <md-card-content>
+
+                        <div fxLayout="row" fxLayoutWrap="wrap">
+
+                            <div fxFlex.gt-md="33.33" fxFlex.gt-sm="33.33" fxFlex.gt-xs="33.33" fxFlex="100">
+
+                                <p><span class="font-weight-bold mat-text-primary">Características internas</span></p>
+                                <div>
+                                    <md-checkbox style="float: left; width: 100%;"
+                                                 *ngFor="let item of item_internal_char_list; let i=index"
+                                                 [ngModel]="item_internal_char_list[i].value"
+                                                 [ngModelOptions]="{standalone: true}"
+                                                 (change)="changeCharValue(item_internal_char_list, i)"
+                                    >
+                                        {{item.name}}
+                                    </md-checkbox>
+
+                                </div>
+                            </div>
+
+                            <div fxFlex.gt-md="33.33" fxFlex.gt-sm="33.33" fxFlex.gt-xs="33.33" fxFlex="100">
+
+                                <p><span class="font-weight-bold mat-text-primary">Características externas</span></p>
+                                <div>
+                                    <md-checkbox style="float: left; width: 100%;"
+                                                 *ngFor="let item of item_external_char_list; let i=index"
+                                                 [ngModel]="item_external_char_list[i].value"
+                                                 [ngModelOptions]="{standalone: true}"
+                                                 (change)="changeCharValue(item_external_char_list, i)"
+                                    >
+                                        {{item.name}}
+                                    </md-checkbox>
+
+                                </div>
+                            </div>
+
+                            <div fxFlex.gt-md="33.33" fxFlex.gt-sm="33.33" fxFlex.gt-xs="33.33" fxFlex="100">
+
+                                <p><span class="font-weight-bold mat-text-primary">Características del sector</span></p>
+                                <md-checkbox style="float: left; width: 100%;"
+                                             *ngFor="let item of item_sector_char_list; let i=index"
+                                             [ngModel]="item_sector_char_list[i].value"
+                                             [ngModelOptions]="{standalone: true}"
+                                             (change)="changeCharValue(item_sector_char_list, i)"
+                                >
+                                    {{item.name}}
+                                </md-checkbox>
+
+                            </div>
+
+                        </div>
+                    </md-card-content>
+                </md-tab>
+            </md-tab-group>
+
+
+        </md-dialog-content>
+
+        <md-dialog-actions>
+
+            <button md-raised-button color="accent" type="submit" class="mr-1">
+                Guardar
+            </button>
+            <button md-button type="button" (click)="dialogRef.close()">Cancelar</button>
+
+        </md-dialog-actions>
+    </form>
+
+    <md-autocomplete #reactiveAuto="mdAutocomplete" [displayWith]="displayFn">
+        <md-option *ngFor="let state of reactiveLocations | async" [value]="state">
+            <span>{{ state.name }}</span>
+            <span> ({{state.code}}) </span>
+        </md-option>
+    </md-autocomplete>
+
+</div>

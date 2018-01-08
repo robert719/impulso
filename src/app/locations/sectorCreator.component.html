@@ -1,0 +1,35 @@
+<div fxLayout="row" class="ma-1" fxLayoutAlign="center center" *ngIf="!sectorLoaded">
+    <md-progress-bar mode="indeterminate" color="primary" class="mb-1"></md-progress-bar>
+</div>
+
+<div *ngIf="sectorLoaded">
+    <form [formGroup]="sectorsForm" (submit)="addOrEditSector(sectorsForm?.value)" enctype="multipart/form-data">
+
+        <md-card-title *ngIf="addingSector">Agregar sector</md-card-title>
+        <md-card-title *ngIf="editingSector">Editar sector</md-card-title>
+
+        <md-dialog-content>
+
+            <input type="hidden" formControlName="id" [ngModel]="sectorSelected?.id">
+
+            <div style="float:left; width: 100%;">
+                <md-input-container style="width: 100%;">
+                    <input required mdInput placeholder="Nombre:" formControlName="sector" type="text" [ngModel]="sectorSelected?.name">
+                </md-input-container>
+                <small *ngIf="sectorsForm.controls['sector'].hasError('required') && sectorsForm.controls['sector'].touched"
+                       class="mat-text-warn">Campo requerido.
+                </small>
+            </div>
+
+        </md-dialog-content>
+
+        <md-dialog-actions>
+
+            <button md-raised-button color="accent"  type="submit" class="mr-1">Guardar</button>
+            <button md-button type="button" (click)="dialogRef.close()">Cancelar</button>
+
+
+        </md-dialog-actions>
+    </form>
+
+</div>

@@ -1,0 +1,288 @@
+<div fxLayout="row" class="ma-1" fxLayoutAlign="center center" *ngIf="!propertiesLoaded">
+  <md-progress-bar mode="indeterminate" color="primary" class="mb-1"></md-progress-bar>
+</div>
+
+
+<md-sidenav-container class="background-none shadow-none" style="position: relative" *ngIf="propertiesLoaded">
+  <md-sidenav #productsnav [mode]="isOver() ? 'over' : 'side'" [opened]="!isOver()" class="pa-1 ma-0">
+    <form [formGroup]="propertiesFilter">
+      <button class="mb-1" color="primary" md-raised-button *ngIf="propertiesFilterActive()" (click)="cleanPropertiesFilter()">
+        <md-icon mdSuffix>close</md-icon>
+        Limpiar
+      </button>
+      <!--            <button class="mb-1" color="primary" md-raised-button (click)="getIntegrations()">
+                <md-icon mdSuffix>close</md-icon>
+                Integraciones
+            </button>
+            <button class="mb-1" color="primary" md-raised-button (click)="getAgents()">
+                <md-icon mdSuffix>close</md-icon>
+                Agentes
+            </button>
+            <button class="mb-1" color="primary" md-raised-button (click)="getNeighborhoods()">
+                <md-icon mdSuffix>close</md-icon>
+                Barrios
+            </button>
+            <button class="mb-1" color="primary" md-raised-button (click)="getMappedObject()">
+                <md-icon mdSuffix>close</md-icon>
+                Sector mapeado
+            </button>
+            <button class="mb-1" color="primary" md-raised-button (click)="mapObject()">
+                <md-icon mdSuffix>close</md-icon>
+                Mapear objeto
+            </button>
+            <button class="mb-1" color="primary" md-raised-button (click)="shareAppropiate(null)">
+                <md-icon mdSuffix>close</md-icon>
+                Compartir propiedad
+            </button>
+            <button class="mb-1" color="primary" md-raised-button (click)="deleteProperty()">
+                <md-icon mdSuffix>close</md-icon>
+                Borrar propiedad
+            </button>
+            <button class="mb-1" color="primary" md-raised-button (click)="updateAuthentication()">
+                <md-icon mdSuffix>close</md-icon>
+                Actualizar auth
+            </button>
+            <button class="mb-1" color="primary" md-raised-button (click)="activateIntegration()">
+                <md-icon mdSuffix>close</md-icon>
+                Activar Int.
+            </button>
+            <button class="mb-1" color="primary" md-raised-button (click)="updateIntegration()">
+                <md-icon mdSuffix>close</md-icon>
+                Actualizar estado integración
+            </button>-->
+      <!--<p class="mt-0"><b>Filtros:</b></p>-->
+      <md-input-container>
+        <input mdInput placeholder="Código:" formControlName="code" color="primary">
+      </md-input-container>
+      <md-input-container>
+        <input mdInput placeholder="Tipo:" [mdAutocomplete]="reactiveType" formControlName="type">
+      </md-input-container>
+      <md-autocomplete #reactiveType="mdAutocomplete" [displayWith]="displayFn">
+        <md-option *ngFor="let item of reactiveTypes | async" [value]="item">
+          <span>{{ item.name }}</span>
+        </md-option>
+      </md-autocomplete>
+      <md-input-container>
+        <input mdInput placeholder="Ubicación:" [mdAutocomplete]="reactiveLocation" formControlName="location">
+      </md-input-container>
+      <md-autocomplete #reactiveLocation="mdAutocomplete" [displayWith]="displayFn">
+        <md-option *ngFor="let item of reactiveLocations | async" [value]="item">
+          <span>{{ item.name }}</span>
+        </md-option>
+      </md-autocomplete>
+      <md-input-container>
+        <input mdInput placeholder="Negocio:" [mdAutocomplete]="reactivePropertyOn" formControlName="property_on">
+      </md-input-container>
+      <md-autocomplete #reactivePropertyOn="mdAutocomplete" [displayWith]="displayFn">
+        <md-option *ngFor="let item of reactivePropertiesOn | async" [value]="item">
+          <span>{{ item.name }}</span>
+        </md-option>
+      </md-autocomplete>
+      <md-input-container>
+        <input mdInput placeholder="Precio mín:" formControlName="priceFrom" type="number">
+      </md-input-container>
+      <md-input-container>
+        <input mdInput placeholder="Precio máx:" formControlName="priceTo" type="number">
+      </md-input-container>
+      <md-input-container>
+        <input mdInput placeholder="Área mín:" formControlName="areaFrom" type="number">
+      </md-input-container>
+      <md-input-container>
+        <input mdInput placeholder="Área máx:" formControlName="areaTo" type="number">
+      </md-input-container>
+      <md-input-container>
+        <input mdInput placeholder="Pisos:" formControlName="floors" type="number">
+      </md-input-container>
+      <md-input-container>
+        <input mdInput placeholder="Habitaciones mín:" formControlName="roomsFrom" type="number">
+      </md-input-container>
+      <md-input-container>
+        <input mdInput placeholder="Baños mín:" formControlName="bathsFrom" type="number">
+      </md-input-container>
+      <md-input-container>
+        <input mdInput placeholder="Parqueaderos mín:" formControlName="parkings" type="number">
+      </md-input-container>
+      <md-input-container>
+        <input mdInput placeholder="Salas mín:" formControlName="livings" type="number">
+      </md-input-container>
+      <md-input-container>
+        <input mdInput placeholder="Imágen:" [mdAutocomplete]="reactivePub" formControlName="image">
+      </md-input-container>
+      <md-autocomplete #reactivePub="mdAutocomplete" [displayWith]="displayFn">
+        <md-option *ngFor="let item of reactivePublish | async" [value]="item">
+          <span>{{ item.name }}</span>
+        </md-option>
+      </md-autocomplete>
+      <md-input-container>
+        <input mdInput placeholder="Comentario Administración:" formControlName="admon_comments">
+      </md-input-container>
+      <md-input-container>
+        <input mdInput placeholder="Asesor:" [mdAutocomplete]="reactiveConsultant" formControlName="consultant">
+      </md-input-container>
+      <md-autocomplete #reactiveConsultant="mdAutocomplete" [displayWith]="displayFn">
+        <md-option *ngFor="let item of reactiveConsultants | async" [value]="item">
+          <span>{{ item.name }}</span>
+        </md-option>
+      </md-autocomplete>
+      <md-input-container>
+        <input mdInput placeholder="Propietario:" [mdAutocomplete]="reactiveOwner" formControlName="owner">
+      </md-input-container>
+      <md-autocomplete #reactiveOwner="mdAutocomplete" [displayWith]="displayFn">
+        <md-option *ngFor="let item of reactiveOwners | async" [value]="item">
+          <span>{{ item.name }}</span>
+        </md-option>
+      </md-autocomplete>
+      <md-input-container>
+        <input mdInput placeholder="Matrícula:" formControlName="property_registration">
+      </md-input-container>
+      <md-input-container>
+        <input mdInput placeholder="Estado:" [mdAutocomplete]="reactiveStatus" formControlName="status">
+      </md-input-container>
+      <md-autocomplete #reactiveStatus="mdAutocomplete" [displayWith]="displayFn">
+        <md-option *ngFor="let item of reactiveStatuses | async" [value]="item">
+          <span>{{ item.name }}</span>
+        </md-option>
+      </md-autocomplete>
+      <md-input-container>
+        <input mdInput placeholder="Visible:" [mdAutocomplete]="reactivePub" formControlName="publish">
+      </md-input-container>
+      <md-autocomplete #reactivePub="mdAutocomplete" [displayWith]="displayFn">
+        <md-option *ngFor="let item of reactivePublish | async" [value]="item">
+          <span>{{ item.name }}</span>
+        </md-option>
+      </md-autocomplete>
+      <md-input-container>
+        <input mdInput placeholder="Compartida:" [mdAutocomplete]="reactiveShar" formControlName="sharing">
+      </md-input-container>
+      <md-autocomplete #reactiveShar="mdAutocomplete" [displayWith]="displayFn">
+        <md-option *ngFor="let item of reactiveSharing | async" [value]="item">
+          <span>{{ item.name }}</span>
+        </md-option>
+      </md-autocomplete>
+    </form>
+
+  </md-sidenav>
+  <md-toolbar color="primary" fxHide="false" fxHide.gt-sm>
+    <button (click)="productsnav.toggle()" md-icon-button>
+      <md-icon>short_text</md-icon>
+    </button>
+    <span class="mr-1 ml-1">Filtros</span>
+  </md-toolbar>
+
+  <div fxLayout="row" class="ma-1" fxLayoutAlign="center top" *ngIf="propertiesLoading" style="min-height: 1000px;">
+    <md-progress-bar mode="indeterminate" color="primary" class="mb-1"></md-progress-bar>
+  </div>
+
+  <div fxLayout="row" class="ma-1" *ngIf="!propertiesLoading && property_list.length === 0" style="min-height: 1000px;">
+    <span style="color: dimgray;">No se encontraron resultados.</span>
+  </div>
+
+  <div fxLayout="row" fxLayoutWrap="wrap" *ngIf="!propertiesLoading" style="min-height: 1000px;">
+    <div fxFlex.gt-sm="50" fxFlex.gt-xs="50" fxFlex="100" *ngFor="let item of property_list">
+      <md-card>
+        <div fxLayout="row" fxLayoutAlign="center center" class="mr-1">
+          <md-card-header class="mt-0">
+            <md-card-title style="cursor: pointer">
+              <b (click)="openPropertyDetailDialog(item)">{{item?.type_name}} en {{item?.property_on_name}} en {{item?.location_name}}</b>
+            </md-card-title>
+            <md-card-subtitle>{{item?.sector_name_string}} - {{item?.address}}</md-card-subtitle>
+            <md-card-subtitle>
+              <b>{{item?.id_holder === 0? 1 : item?.id_holder}}A{{item?.id_holder_property ? item?.id_holder_property : item?.id}}</b>
+              <span class="font-weight-bold mat-text-primary">{{ item?.price | currency:'USD':true:'1.0-0' }}</span>
+            </md-card-subtitle>
+          </md-card-header>
+          <span fxFlex></span>
+          <button class="more_button" md-icon-button md-button-sm [md-menu-trigger-for]="card1" aria-label="Open card menu" *ngIf="!item?.shared">
+            <md-icon>more_vert</md-icon>
+          </button>
+        </div>
+        <div (click)="openPropertyDetailDialog(item)" class="card-image-header" [style.background-image]="getPropertyBackground(item?.shared,userId,item?.id,item?.id_holder, item?.id_holder_property,item?.image_url)"
+          style="height: 240px; background-position: center center; cursor: pointer;"></div>
+        <div class="propertyStatus" [style.background]="getColorStatus(item?.status_name)">
+          {{item?.status_name}}
+        </div>
+        <md-card-content>
+          <button *ngIf="item?.shared" md-mini-fab md-fab-card-float class="mr-1" color="primary">
+            <md-icon>cloud_queue</md-icon>
+          </button>
+          <p class="ma-0">{{item?.comments?.length > 115 ? item?.comments?.substring(0, 75)+"..." : item?.comments?.substring(0, 115)}}
+          </p>
+          <div fxLayout="row">
+            <div fxFlex="50%" class="mt-1">
+              <b>Área:</b> {{item?.area}} {{item?.unit_name}}</div>
+            <div *ngIf="item?.built_area" fxFlex="50%" class="mt-1">
+              <b>Área const:</b> {{item?.built_area}} m2</div>
+          </div>
+          <div fxLayout="row">
+            <div *ngIf="item?.rooms" fxFlex="50%" class="mt-1">
+              <b>Habitaciones:</b> {{item?.rooms}}</div>
+            <div *ngIf="item?.floors" fxFlex="50%" class="mt-1">
+              <b>Pisos:</b> {{item?.floors}}</div>
+          </div>
+        </md-card-content>
+        <hr>
+        <md-card-actions>
+          <div fxLayout="row">
+
+            <button *ngIf="!item?.shared" md-button (click)="onSelect(item)">
+              <md-icon color="primary">mode_edit</md-icon>
+              Editar
+            </button>
+            <button md-button (click)="onDelete(item)">
+              <md-icon color="warn">delete_forever</md-icon>
+              Borrar
+            </button>
+            <span fxFlex></span>
+            <button *ngIf="!item?.shared" [disabled]="!item?.publish || item?.publish === 0 || item?.status != 1" md-icon-button (click)="onShareProperty(item)"
+              color="{{item?.sharing === 1 ? 'accent' : '' }}">
+              <md-icon>share</md-icon>
+            </button>
+            <button md-icon-button (click)="onChangePublish(item)" color="{{item?.publish === 1 ? 'accent' : '' }}" [disabled]="!item?.image_url || item?.status !== 1">
+              <md-icon>visibility</md-icon>
+            </button>
+          </div>
+        </md-card-actions>
+      </md-card>
+
+      <md-menu #card1="mdMenu" x-position="before">
+        <button md-menu-item (click)="shareAppropiate(item)">
+          <img class="png-icon" src="./assets/images/appropiate.png" style="width: 24px; height: 24px;">
+          <span *ngIf="item.id_property_appropiate">Descompartir de Appropiate</span>
+          <span *ngIf="!item.id_property_appropiate">Compartir a Appropiate</span>
+        </button>
+
+        <br>
+        <button> Share on Facebook! </button>
+        <a href="#" socialshare socialshare-provider="twitter" socialshare-text="720kb AngularJS Socialshare" socialshare-hashtags="angularjs, angular-socialshare"
+          socialshare-url="http://720kb.net">
+          Share me
+        </a>
+        <!-- <button ceiboShare  [whatsapp]="{u: repoUrl}">Facebook</button> -->
+        <share-container direction="vertical" addedText="Share Details" [expandable]="false" [textEnabled]="true" [platforms]="['googlePlus','reddit','facebook']"
+          [properties]="{'title':'my title', description:'my desc', img:'href(./assets/images/face3.jpg)', via:'Ced_VDB', hashtags:'someHashTag'}">
+        </share-container>
+        <!-- <p socialshare socialshare-provider="facebook" socialshare-type="share" socialshare-via="109096989719772" socialshare-media="{{share.goalimg}}"
+                    socialshare-title="vm.goal.goalText" socialshare-mobileiframe="true" socialshare-url="{{share.goalURL}}"
+                    socialshare-popup-height="300" socialshare-popup-width="400" socialshare-trigger="click">FACEBOOK </p> -->
+        <!-- <share-button [button]="facebook">Facebook</share-button> -->
+        <button md-menu-item>
+          <md-icon>more_horiz</md-icon>
+          Otros
+        </button>
+      </md-menu>
+
+    </div>
+
+  </div>
+
+  <div fxLayout="row" class="ma-1" fxLayoutAlign="center center" *ngIf="!propertiesLoading && loadMore && !loadingMore">
+    <button md-button md-raised-button color="primary" (click)="loadProperties()">Cargar más</button>
+  </div>
+
+  <div fxLayout="row" class="ma-1" fxLayoutAlign="center center" *ngIf="loadingMore">
+    <md-progress-bar mode="indeterminate" color="primary" class="mb-1"></md-progress-bar>
+  </div>
+
+  <div style="width: 100%; height: 100px;"></div>
+
+</md-sidenav-container>

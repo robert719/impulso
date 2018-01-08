@@ -1,0 +1,98 @@
+<div fxLayout="row" class="ma-1" fxLayoutAlign="center center" *ngIf="!dataLoaded">
+    <md-progress-bar mode="indeterminate" color="primary" class="mb-1"></md-progress-bar>
+</div>
+
+<!--Si la integración está activa, muestro la siguiente información-->
+
+<div *ngIf="dataLoaded && active">
+
+    <md-card-title style="font-size: 20px;">Compartir propiedad a {{this.integration | capitalize}}</md-card-title>
+    <form [formGroup]="shareForm" (keydown.enter)="$event.preventDefault()" (submit)="shareAppropiate()">
+    <md-dialog-content>
+            <div style="width: 100%;">
+                <md-card-subtitle>Selecciona el barrio en {{this.item.location_name}} que corresponde al sector {{this.item.sector_name | capitalize}}.</md-card-subtitle>
+                <md-input-container style="width: 100%;">
+                    <input required mdInput placeholder="Barrio:"
+                           [mdAutocomplete]="reactiveNeighbor" formControlName="neighborhood">
+                </md-input-container>
+                <md-autocomplete #reactiveNeighbor="mdAutocomplete" [displayWith]="displayFn">
+                    <md-option *ngFor="let item of reactiveNeighborhoods | async" [value]="item">
+                        <span>{{ item.nombre }}</span>
+                    </md-option>
+                </md-autocomplete>
+                <small *ngIf="shareForm.controls['neighborhood'].hasError('required') && shareForm.controls['neighborhood'].touched"
+                       class="mat-text-warn">Campo requerido.
+                </small>
+
+                <div *ngIf="addBarrio && !addingBarrio && shareForm.controls['neighborhood'].value.nombre" class="mt-0 mb-1 pa-1" style="border: 1px solid lightgray">
+                                            <span class="text-lg">
+                                                ¿Quieres asignar el sector <b>{{this.item.sector_name | capitalize}}</b> al barrio <b>{{shareForm.controls['neighborhood'].value.nombre}}</b>   ?
+                                            </span> &nbsp;
+                    <button md-button-sm md-button md-raised-button color="primary" type="button" (click)="mapObject()">Asignar</button>
+                </div>
+                <md-progress-bar mode="indeterminate" color="primary" class="mb-1" *ngIf="addingBarrio"></md-progress-bar>
+
+            </div>
+    </md-dialog-content>
+
+    <md-dialog-actions>
+
+        <button md-raised-button color="accent" type="submit" class="mr-1">
+            Compartir
+        </button>
+
+        <button md-button (click)="dialogRef.close({error: true})">
+            <md-icon>clear</md-icon>
+            Cerrar
+        </button>
+
+    </md-dialog-actions>
+    </form>
+
+</div>
+
+<!--Si la integración no está activa, muestro la siguiente información-->
+
+<div *ngIf="dataLoaded && !active">
+
+    <md-card-title style="font-size: 20px;">Activar integración con {{this.integration | capitalize}}</md-card-title>
+
+    <form [formGroup]="activateForm" (keydown.enter)="$event.preventDefault()" (submit)="activateIntegration(activateForm?.value)">
+
+    <md-dialog-content>
+            <div style="width: 100%;">
+                <md-card-subtitle>Ingresa el usuario y contraseña de {{this.integration | capitalize}}.</md-card-subtitle>
+                <md-input-container style="width: 100%;">
+                    <input required mdInput placeholder="Usuario:" formControlName="user">
+                </md-input-container>
+                <small *ngIf="activateForm.controls['user'].hasError('required') && activateForm.controls['user'].touched"
+                       class="mat-text-warn">Campo requerido.
+                </small>
+                <md-input-container style="width: 100%;">
+                    <input required mdInput placeholder="Contraseña:" formControlName="password">
+                </md-input-container>
+                <small *ngIf="activateForm.controls['password'].hasError('required') && activateForm.controls['password'].touched"
+                       class="mat-text-warn">Campo requerido.
+                </small>
+
+                <div *ngIf="showError">
+                    <p class="mat-text-warn">{{error}}</p>
+                </div>
+            </div>
+    </md-dialog-content>
+
+    <md-dialog-actions>
+
+        <button md-raised-button color="accent" type="submit" class="mr-1">
+            Activar
+        </button>
+
+        <button md-button type="button" (click)="dialogRef.close({error: true})">
+            <md-icon>clear</md-icon>
+            Cerrar
+        </button>
+
+    </md-dialog-actions>
+    </form>
+
+</div>

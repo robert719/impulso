@@ -1,0 +1,43 @@
+<div class="session" style="background-color: #37474F">
+  <div class="session-content">
+    <div class="session-wrapper">
+      <md-card>
+        <md-card-content>
+          <form [formGroup]="form" (ngSubmit)="onSubmit(form.value)">
+            <div class="text-xs-center pb-1">
+              <img src="./assets/images/impulso2.png" width="140px" alt="logo impulso">
+              <p class="mat-text-muted text-weight-bold mt-0"><b>Impulso Raíz</b></p>
+            </div>
+            <div fxLayout="column" fxLayoutAlign="space-around">
+              <div *ngIf="showError">
+                <p class="mat-text-warn">Usuario o contraseña incorrectos.</p>
+              </div>
+              <div class="pb-1">
+                <md-input-container style="width: 100%">
+                  <input mdInput placeholder="Email" type="email" [formControl]="form.controls['username']">
+                </md-input-container>
+                <small *ngIf="form.controls['username'].hasError('required') && form.controls['username'].touched" class="mat-text-warn">Debes ingresar tu email.</small>
+                <small *ngIf="form.controls['username'].errors?.email && form.controls['username'].touched" class="mat-text-warn">Debes ingresar un email válido.</small>
+              </div>
+              <div class="pb-1">
+                <md-input-container style="width: 100%">
+                  <input mdInput type="password" placeholder="Contraseña" [formControl]="form.controls['password']">
+                </md-input-container>
+                <small *ngIf="form.controls['password'].hasError('required') && form.controls['password'].touched" class="mat-text-warn">Debes ingresar tu contraseña.</small>
+              </div>
+              <!--<div class="pb-1 mat-text-muted">-->
+                <!--<md-checkbox>Mantenerme conectado</md-checkbox>-->
+              <!--</div>-->
+              <button md-raised-button color="accent" type="submit" *ngIf="!loading">Iniciar Sesión</button>
+              <md-progress-bar mode="indeterminate" color="primary" class="mb-1" *ngIf="loading"></md-progress-bar>
+            </div>
+<!--            <div class="pt-1 pb-1 text-xs-center mat-text-muted">
+              <a [routerLink]="['/session/forgot']"><b>¿Olvidaste tu contraseña?</b></a>&nbsp;&nbsp;&nbsp;&nbsp;
+              <a [routerLink]="['/session/signup']"><b>Registrate.</b></a>
+            </div>-->
+          </form>
+        </md-card-content>
+      </md-card>
+    </div>
+  </div>
+</div>

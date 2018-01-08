@@ -1,0 +1,9 @@
+<md-card-title *ngIf="data.title">{{data.title}}</md-card-title>
+<md-card-subtitle *ngIf="data.subtitle">{{data.subtitle}}</md-card-subtitle>
+<md-dialog-content *ngIf="data.loading">
+    <md-progress-bar mode="indeterminate" color="primary" class="mb-1" *ngIf="data.loading"></md-progress-bar>
+</md-dialog-content>
+<md-dialog-actions>
+    <button md-raised-button color="accent" type="button" class="mr-1" (click)="dialogRef.close(true)" *ngIf="data.ok">Aceptar</button>
+    <button md-button type="button" (click)="dialogRef.close(false)" *ngIf="data.cancel">Cancelar</button>
+</md-dialog-actions>

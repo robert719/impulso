@@ -1,0 +1,302 @@
+<div fxLayout="row" class="ma-1" fxLayoutAlign="center center" *ngIf="!propertyLoaded">
+    <md-progress-bar mode="indeterminate" color="primary" class="mb-1"></md-progress-bar>
+</div>
+<div *ngIf="propertyLoaded">
+    <md-card-title style="font-size: 20px;"> {{property?.type_name}} en {{property?.property_on_name}} en {{property?.location_name}} |
+        {{property?.id_holder}}A{{property?.id_holder_property ? property?.id_holder_property : property?.id}}
+    </md-card-title>
+    <md-card-subtitle>{{property?.sector_name_string}} {{property?.address? ' - ' + property.address : ''}}</md-card-subtitle>
+    <md-dialog-content>
+
+        <md-tab-group md-stretch-tabs>
+            <md-tab>
+                <ng-template md-tab-label>
+                    <md-icon>photo</md-icon>
+                    Imágenes
+                </ng-template>
+                <md-card-content>
+                    <div id="idDivFotoramaHolder">
+                    </div>
+                </md-card-content>
+            </md-tab>
+            <md-tab>
+                <ng-template md-tab-label>
+                    <md-icon>details</md-icon>
+                    Detalles
+                </ng-template>
+                <md-card-content>
+                    <div fxLayout="row" fxLayoutWrap="wrap">
+                        <div fxFlex.gt-md="70" fxFlex.gt-sm="70" fxFlex.gt-xs="70" fxFlex="100"
+                             class="pb-1 pr-1 pt-1 text-justify">
+
+                            <div *ngIf="property?.comments" style="text-align: justify; text-justify: inter-word;">
+                                <strong>Comentario web:</strong>
+                                <br>
+                                {{property?.comments}}
+                            </div>
+
+                            <div class="propertyDetail">
+                                <strong>Área:</strong>
+                                <br>
+                                {{1.0 *property?.area | number:'1.1-2'}} {{property?.unit_name}}
+                            </div>
+
+                            <div *ngIf="property?.built_area" class="propertyDetail">
+                                <strong>Área construida:</strong>
+                                <br>{{1.0 *property?.built_area | number:'1.1-2'}} m2
+                            </div>
+
+                            <div *ngIf="property?.stratum" class="propertyDetail">
+                                <strong>Estrato:</strong>
+                                <br>
+                                {{property?.stratum}}
+                            </div>
+
+                            <div *ngIf="property?.administration" class="propertyDetail">
+                                <strong>Valor administración:</strong>
+                                <br>
+                                ${{1.0 * property?.administration | number:'1.1-2'}}
+                            </div>
+
+                            <div *ngIf="property?.status" class="propertyDetail">
+                                <strong>Estado:</strong>
+                                <br>
+                                {{property?.status_name}}
+                            </div>
+
+                            <div *ngIf="property?.property_registration" class="propertyDetail">
+                                <strong>Matrícula inmobiliaria:</strong>
+                                <br>
+                                {{property?.property_registration}}
+                            </div>
+
+                            <div class="propertyDetail">
+                                <strong>Precio:</strong>
+                                <br>
+                                ${{1.0 * property?.price | number:'1.1-2'}}
+                            </div>
+                            <div style="clear: both"></div>
+                            <br>
+                            <div *ngIf="property?.floors || property?.rooms || property?.baths || property?.livings || property?.parkings">
+                                <strong>Características:</strong>
+                                <br>
+                                <div *ngIf="property?.floors" class="propertyDetail">
+                                    Pisos:
+                                    <br>
+                                    {{property?.floors}}
+                                </div>
+
+                                <div *ngIf="property?.rooms" class="propertyDetail">
+                                    Habitaciones:
+                                    <br>
+                                    {{property?.rooms}}
+                                </div>
+
+                                <div *ngIf="property?.baths" class="propertyDetail">
+                                    Baños:
+                                    <br>
+                                    {{property?.baths}}
+                                </div>
+
+                                <div *ngIf="property?.livings" class="propertyDetail">
+                                    Salas:
+                                    <br>{{property?.livings}}
+                                </div>
+
+                                <div *ngIf="property?.parkings" class="propertyDetail">
+                                    Parqueadero (carros):
+                                    <br>
+                                    {{property?.parkings }}
+                                </div>
+                            </div>
+
+                            <div style="clear: both"></div>
+                            <br>
+
+                            <div fxLayout="row" fxLayoutWrap="wrap">
+
+
+                                <div *ngIf="property?.property_internal_details.length > 0" fxFlex.gt-md="33.33%"
+                                     fxFlex.gt-sm="33.33%" fxFlex.gt-xs="33.33%" fxFlex="100" class="mt-1">
+                                    <strong>Características Internas:</strong>
+                                    <br>
+                                    <div *ngFor="let item of property.property_internal_details; let i = index">
+                                        {{item.internal_detail.name}}
+                                    </div>
+                                </div>
+                                <div *ngIf="property?.property_external_details.length > 0" fxFlex.gt-md="33.33%"
+                                     fxFlex.gt-sm="33.33%" fxFlex.gt-xs="33.33%" fxFlex="100" class="mt-1">
+                                    <strong>Características Externas:</strong>
+                                    <br>
+                                    <div *ngFor="let item of property.property_external_details; let i = index">
+                                        {{item.external_detail.name}}
+                                    </div>
+                                </div>
+                                <div *ngIf="property?.property_sector_details.length > 0" fxFlex.gt-md="33.33%"
+                                     fxFlex.gt-sm="33.33%" fxFlex.gt-xs="33.33%" fxFlex="100" class="mt-1">
+                                    <strong>Características del Sector:</strong>
+                                    <br>
+                                    <div *ngFor="let item of property.property_sector_details; let i = index">
+                                        {{item.sector_detail.name}}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div fxFlex.gt-md="30" fxFlex.gt-sm="30" fxFlex.gt-xs="30" fxFlex="100"
+                             class="pb-1 pr-1 pt-1 text-justify">
+
+                            <div *ngIf="downlineName || downlineAddress|| downlineCellphone || downlineEmail || downlinePhone || downlineWebsite">
+                                <strong>Información del propietario:</strong>
+                                <br>
+                                <div *ngIf="downlineName" class="propertyDetail">
+                                    Empresa:
+                                    <br>
+                                    {{downlineName}}
+                                </div>
+                                <div *ngIf="downlineEmail" class="propertyDetail">
+                                    Email:
+                                    <br>
+                                    {{downlineEmail}}
+                                </div>
+                                <div *ngIf="downlineAddress" class="propertyDetail">
+                                    Dirección:
+                                    <br>
+                                    {{downlineAddress}}
+                                </div>
+                                <div *ngIf="downlinePhone || downlineCellphone" class="propertyDetail">
+                                    Teléfonos:
+                                    <br>
+                                    {{downlinePhone == 0 || !downlinePhone ? '': ' '+downlinePhone }} {{downlineCellphone == 0 || !downlineCellphone ? '': ' '+downlineCellphone }}
+                                </div>
+                                <div *ngIf="downlineWebsite" class="propertyDetail">
+                                    Sitio web:
+                                    <br>
+                                    {{ downlineWebsite }}
+                                </div>
+                            </div>
+                            <div style="clear: both"></div>
+
+                            <div *ngIf="owner_name || owner_document || owner_email || owner_phone1 || owner_phone2">
+                                <strong>Información del propietario:</strong>
+                                <br>
+                                <div *ngIf="owner_name" class="propertyDetail">
+                                    Nombre:
+                                    <br>
+                                    {{owner_name}}
+                                </div>
+                                <div *ngIf="owner_document" class="propertyDetail">
+                                    Documento:
+                                    <br>
+                                    {{owner_document}}
+                                </div>
+                                <div *ngIf="owner_email" class="propertyDetail">
+                                    Email:
+                                    <br>
+                                    {{owner_email}}
+                                </div>
+                                <div *ngIf="owner_phone1 || owner_phone2" class="propertyDetail">
+                                    Teléfonos:
+                                    <br>
+                                    {{owner_phone1 }} {{owner_phone2 == 0? '': ' / '+owner_phone2 }}
+                                </div>
+                            </div>
+                            <div style="clear: both"></div>
+                            <br>
+                            <div *ngIf="consultant_name || consultant_phone || consultant_email">
+                                <strong>Información del asesor:</strong>
+                                <br>
+                                <div *ngIf="consultant_name" class="propertyDetail">
+                                    Nombre:
+                                    <br>
+                                    {{consultant_name}}
+                                </div>
+                                <div *ngIf="consultant_phone" class="propertyDetail">
+                                    Teléfono:
+                                    <br>
+                                    {{consultant_phone}}
+                                </div>
+                                <div *ngIf="consultant_email" class="propertyDetail">
+                                    Email:
+                                    <br>
+                                    {{consultant_email}}
+                                </div>
+                            </div>
+                            <div style="clear: both"></div>
+                            <br>
+                            <div *ngIf="property.consultant || property.commission || property.admon_comments">
+                                <strong>Información administrativa:</strong>
+                                <br>
+                                <div *ngIf="property.admon_comments" class="propertyDetail">
+                                    Comentarios:
+                                    <br>
+                                    {{property?.admon_comments }}
+                                </div>
+                                <div *ngIf="consultant_name" class="propertyDetail">
+                                    Asesor:
+                                    <br>
+                                    {{consultant_name}}
+                                </div>
+                                <div *ngIf="consultant_phone" class="propertyDetail">
+                                    Teléfono asesor:
+                                    <br>
+                                    {{consultant_phone}}
+                                </div>
+
+                                <div *ngIf="property.commission" class="propertyDetail">
+                                    Comisión:
+                                    <br>
+                                    {{1.0 * property?.commission | number:'1.1-2'}} %
+                                </div>
+                                <div *ngIf="downlineName" class="propertyDetail">
+                                    Empresa:
+                                    <br>
+                                    {{downlineName}}
+                                </div>
+                                <div *ngIf="downlineEmail" class="propertyDetail">
+                                    Email:
+                                    <br>
+                                    {{downlineEmail}}
+                                </div>
+                                <div *ngIf="downlineNit" class="propertyDetail">
+                                    Nit:
+                                    <br>
+                                    {{downlineNit}}
+                                </div>
+                                <div *ngIf="downlineWebsite" class="propertyDetail">
+                                    Página web:
+                                    <br>
+                                    {{downlineWebsite}}
+                                </div>
+                                <div *ngIf="downlinePhone" class="propertyDetail">
+                                    Teléfono:
+                                    <br>
+                                    {{downlinePhone}}
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </md-card-content>
+            </md-tab>
+        </md-tab-group>
+
+
+    </md-dialog-content>
+
+    <md-dialog-actions>
+
+        <button md-button (click)="dialogRef.close(item)">
+            <md-icon color="primary">mode_edit</md-icon>
+            Editar
+        </button>
+        <button md-button (click)="dialogRef.close()">
+            <md-icon>clear</md-icon>
+            Cerrar
+        </button>
+
+    </md-dialog-actions>
+
+</div>

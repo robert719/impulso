@@ -1,0 +1,62 @@
+:host {
+  @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css');
+
+  
+  .sebm-google-map-container {
+    width: 100%;
+    height: 400px;
+    display: flex;
+  }
+}
+:host /deep/ {
+  md-sidenav {
+    width: 200px;
+  }
+  .mat-sidenav-container {
+    overflow: visible;
+    .mat-sidenav {
+      overflow: visible;
+    }
+  }
+  .mat-sidenav-content {
+    padding: 0;
+  }
+  @media (min-width: 959px) {
+    .mat-sidenav-side {
+      background-color: transparent;
+      box-shadow: none!important;
+    }
+  }
+  .mat-slider-horizontal {
+    width: 100%;
+    min-width: 1px;
+  }
+}
+
+
+.mat-dialog-container {
+  max-width: 90vw !important;
+}
+
+.propertyStatus {
+  position: absolute;
+  width: 100%;
+  margin-top: -20px;
+  color: white;
+  text-align: center;
+}
+
+.more_button {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+}
+
+.png-icon{
+  margin: 0px 15px auto auto;
+  padding: 0;
+  display: inline-block;
+  background-repeat: no-repeat no-repeat;
+  pointer-events: none;
+  vertical-align: middle;
+}

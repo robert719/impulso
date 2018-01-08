@@ -1,0 +1,35 @@
+:host {
+  .sebm-google-map-container {
+    width: 100%;
+    height: 400px;
+    display: flex;
+  }
+}
+:host /deep/ {
+  md-sidenav {
+    width: 200px;
+  }
+  .mat-sidenav-container {
+    overflow: visible;
+    .mat-sidenav {
+      overflow: visible;
+    }
+  }
+  .mat-sidenav-content {
+    padding: 0;
+  }
+  @media (min-width: 959px) {
+    .mat-sidenav-side {
+      background-color: transparent;
+      box-shadow: none!important;
+    }
+  }
+  .mat-slider-horizontal {
+    width: 100%;
+    min-width: 1px;
+  }
+}
+
+.mat-dialog-container {
+  max-width: 90vw !important;
+}
